@@ -1,0 +1,44 @@
+services:
+  ktor:
+    build: .
+    platform: linux/amd64
+    container_name: backend-ktor
+    restart: always
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    networks:
+      - pgnetwork
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17.2
+    platform: linux/amd64
+    restart: always
+    expose:
+      - 5432
+    container_name: backend-db
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+      - ./sql/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+    environment:
+      POSTGRES_DB: dbName
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - 5432:5432
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  pgnetwork:
+    driver: bridge

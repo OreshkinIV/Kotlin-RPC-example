@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">kotlin-rpc-example</string>
+    <string name="auth_title">Вход</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="register">Зарегистрироваться</string>
+    <string name="sign_in">Войти</string>
+    <string name="logout">Выйти</string>
+    <string name="send_message">Отправить сообщение клиентам</string>
+    <string name="message">Сообщение</string>
+    <string name="get_user_jwt">Получить JWT Payload</string>
+    <string name="from_screen">from: %1$s</string>
+    <string name="load_file">Отправить файл на сервер</string>
+</resources>

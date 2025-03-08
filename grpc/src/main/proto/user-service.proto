@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message JwtPayload {
+  int64 expiresAt = 1;
+  string issuer = 2;
+  repeated string audience = 3;
+}
+
+message GetUserJwtPayloadParams {}
+
+service UserService {
+  rpc getUserJwtPayload(GetUserJwtPayloadParams) returns (JwtPayload);
+}
