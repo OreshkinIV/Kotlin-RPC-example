@@ -1,13 +1,10 @@
 package org.example.krpc.data.api.rpc.api
 
 import io.ktor.client.HttpClient
-import io.ktor.utils.io.core.use
 import kotlinx.coroutines.flow.Flow
-import org.example.krpc.data.network.rpcFlow
 import org.example.krpc.data.network.rpcService
 import org.example.krpc.models.requests.AuthBody
 import org.example.krpc.models.responses.JwtPayload
-import org.example.krpc.models.responses.RpcResponse
 import org.example.krpc.models.responses.UserResponse
 import org.example.krpc.services.AuthRpcService
 import org.example.krpc.services.UserRpcService
@@ -15,18 +12,18 @@ import org.example.krpc.services.UserRpcService
 interface RpcApi {
 
     /** auth */
-    suspend fun registerNewUser(body: AuthBody): RpcResponse<UserResponse?>
+    suspend fun registerNewUser(body: AuthBody): UserResponse
 
-    suspend fun login(body: AuthBody): RpcResponse<UserResponse?>
+    suspend fun login(body: AuthBody): UserResponse
 
-    suspend fun refreshToken(refreshToken: String): RpcResponse<UserResponse?>
+    suspend fun refreshToken(refreshToken: String): UserResponse
 
     /** user */
     suspend fun getUserJwtPayload(): JwtPayload
 
     suspend fun sendMessage(message: String)
 
-    fun listenMessages(): Flow<String>
+    suspend fun listenMessages(): Flow<String>
 
     suspend fun loadFile(file: ByteArray, name: String)
 }
@@ -59,15 +56,15 @@ class RpcApiImpl(
     }
 
     /** rpc auth */
-    override suspend fun registerNewUser(body: AuthBody): RpcResponse<UserResponse?> {
+    override suspend fun registerNewUser(body: AuthBody): UserResponse {
         return authService().registerNewUser(body)
     }
 
-    override suspend fun login(body: AuthBody): RpcResponse<UserResponse?> {
+    override suspend fun login(body: AuthBody): UserResponse {
         return authService().login(body)
     }
 
-    override suspend fun refreshToken(refreshToken: String): RpcResponse<UserResponse?> {
+    override suspend fun refreshToken(refreshToken: String): UserResponse {
         return authService().refreshToken(refreshToken)
     }
 
@@ -80,10 +77,8 @@ class RpcApiImpl(
         return userService().sendMessage(message)
     }
 
-    override fun listenMessages(): Flow<String> {
-        return rpcFlow {
-            userService().listenMessages()
-        }
+    override suspend fun listenMessages(): Flow<String> {
+        return userService().listenMessages()
     }
 
     override suspend fun loadFile(file: ByteArray, name: String) {

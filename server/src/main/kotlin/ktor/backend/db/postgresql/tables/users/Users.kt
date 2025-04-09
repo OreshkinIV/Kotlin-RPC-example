@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-/** обращения к бд отключены, чтобы не тратить пробный период Railway */
+/** обращения к бд отключены, на данный момент пробный период railway закончился */
 object Users : Table() {
     private val login = Users.varchar("login", 100)
     private val password = Users.varchar("password", 100)

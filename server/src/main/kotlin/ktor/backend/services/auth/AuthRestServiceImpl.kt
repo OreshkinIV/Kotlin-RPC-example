@@ -36,7 +36,7 @@ class AuthRestServiceImpl(
 
         val user = Users.getUser(body.login)
         if (user != null) {
-            call.respond(HttpStatusCode.Conflict, "User already exists")
+            call.respond(HttpStatusCode.Conflict, "Пользователь уже существует")
         } else {
             val authToken = createToken(expiresAuth)
             val refreshToken = createToken(expireRefresh)
@@ -49,7 +49,7 @@ class AuthRestServiceImpl(
                     )
                 )
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, "Can't create user ${e.message}")
+                call.respond(HttpStatusCode.BadRequest, "Не удалось создать пользователя, ${e.message}")
             }
 
             call.respond(UserResponse(authToken = authToken, refreshToken = refreshToken))

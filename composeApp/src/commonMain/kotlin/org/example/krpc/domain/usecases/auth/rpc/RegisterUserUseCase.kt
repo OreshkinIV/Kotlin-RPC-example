@@ -8,14 +8,14 @@ import org.example.krpc.domain.repo.AuthRepository
 import org.example.krpc.models.responses.UserResponse
 
 interface RegisterUserUseCase {
-    suspend operator fun invoke(body: AuthBody): UserResponse?
+    suspend operator fun invoke(body: AuthBody): UserResponse
 }
 
 class RegisterUserUseCaseImpl(
     private val authRepository: AuthRepository,
 ): RegisterUserUseCase {
 
-    override suspend fun invoke(body: AuthBody): UserResponse? {
+    override suspend fun invoke(body: AuthBody): UserResponse {
         return withContext(Dispatchers.IO) {
             authRepository.registerNewUser(body)
         }

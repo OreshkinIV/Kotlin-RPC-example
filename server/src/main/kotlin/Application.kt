@@ -15,6 +15,7 @@ import ktor.backend.ktor.backend.plugins.routing.configureRouting
 import ktor.backend.ktor.backend.plugins.serialization.installSerialization
 import ktor.backend.plugins.auth.installAuth
 import ktor.backend.plugins.krpc.installKRPC
+import ktor.backend.plugins.statuspages.installStatusPages
 import org.example.krpc.DEFAULT_PORT
 import org.example.krpc.TLS_PORT
 import org.slf4j.LoggerFactory
@@ -61,6 +62,7 @@ private fun ApplicationEngine.Configuration.envConfig() {
 fun Application.module() {
     val config = ConfigFactory.load()
     installSerialization()
+    installStatusPages()
     installAuth(config)
     installKRPC()
     configureDatabases(config)

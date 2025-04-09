@@ -3,12 +3,11 @@ package ktor.backend.ktor.backend.services.auth
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.typesafe.config.Config
+import io.ktor.http.HttpStatusCode
 import org.example.krpc.models.requests.AuthBody
 import ktor.backend.ktor.backend.db.postgresql.tables.users.User
 import ktor.backend.ktor.backend.db.postgresql.tables.users.Users
-import org.example.krpc.INVALID_REFRESH_TOKEN_CODE
 import org.example.krpc.models.responses.ErrorResponse
-import org.example.krpc.models.responses.RpcResponse
 import org.example.krpc.models.responses.UserResponse
 import org.example.krpc.services.AuthRpcService
 import java.util.*
@@ -43,10 +42,10 @@ class AuthRpcServiceImpl(
         .withExpiresAt(Date(System.currentTimeMillis() + expires))
         .sign(Algorithm.HMAC256(secret))
 
-    override suspend fun registerNewUser(body: AuthBody): RpcResponse<UserResponse?> {
+    override suspend fun registerNewUser(body: AuthBody): UserResponse {
         val user = Users.getUser(body.login)
         return if (user != null) {
-            RpcResponse(data = null, error = ErrorResponse("User already exists"))
+            throw ErrorResponse(HttpStatusCode.Conflict, "Пользователь уже существует")
         } else {
             val authToken = createToken(expiresAuth)
             val refreshToken = createToken(expireRefresh)
@@ -59,33 +58,33 @@ class AuthRpcServiceImpl(
                     )
                 )
             } catch (e: Exception) {
-                RpcResponse(data = null, error = ErrorResponse("Can't create user ${e.message}"))
+                throw ErrorResponse(HttpStatusCode.BadRequest, "Не удалось создать пользователя, ${e.message}")
             }
 
-            return RpcResponse(data = UserResponse(authToken, refreshToken))
+            UserResponse(authToken, refreshToken)
         }
     }
 
-    override suspend fun login(body: AuthBody): RpcResponse<UserResponse?> {
+    override suspend fun login(body: AuthBody): UserResponse {
         val userDTO = Users.getUser(body.login)
         return if (userDTO != null) {
             val authToken = createToken(expiresAuth)
             val refreshToken = createToken(expireRefresh)
 
-            RpcResponse(data = UserResponse(authToken, refreshToken))
+            UserResponse(authToken, refreshToken)
         } else {
-            RpcResponse(data = null, error = ErrorResponse("User not exists"))
+            throw ErrorResponse(HttpStatusCode.NotFound, "Пользователь не существует")
         }
     }
 
-    override suspend fun refreshToken(refreshToken: String): RpcResponse<UserResponse?> {
+    override suspend fun refreshToken(refreshToken: String): UserResponse {
         return if (verifyToken(refreshToken) != null) {
             val auth = createToken(expiresAuth)
             val refresh = createToken(expireRefresh)
 
-            RpcResponse(UserResponse(auth, refresh))
+            UserResponse(auth, refresh)
         } else {
-            RpcResponse(data = null, error = ErrorResponse("Invalid refresh token", INVALID_REFRESH_TOKEN_CODE))
+            UserResponse(null, null)
         }
     }
 }

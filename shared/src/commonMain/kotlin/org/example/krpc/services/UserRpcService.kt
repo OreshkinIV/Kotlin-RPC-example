@@ -12,7 +12,7 @@ interface UserRpcService: RemoteService {
 
     suspend fun sendMessage(message: String)
 
-    suspend fun listenMessages(): Flow<String>
+    fun listenMessages(): Flow<String>
 
     suspend fun loadFile(file: ByteArray, name: String)
 }

@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.tls)
+    implementation(libs.ktor.status.pages)
 
     /** ktor content and serialization */
     implementation(libs.ktor.server.content)

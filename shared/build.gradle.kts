@@ -41,6 +41,7 @@ kotlin {
         commonMain.dependencies {
             // put your Multiplatform dependencies here
             implementation(libs.krpc.server)
+            implementation(libs.ktor.status.pages)
         }
     }
 }

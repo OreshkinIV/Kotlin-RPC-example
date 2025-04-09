@@ -9,7 +9,7 @@ interface UserRepository {
 
     suspend fun sendMessage(message: String)
 
-    fun listenMessages(): Flow<String>
+    suspend fun listenMessages(): Flow<String>
 
     suspend fun loadFile(file: ByteArray, name: String)
 }

@@ -7,14 +7,11 @@ import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import io.ktor.http.URLProtocol
 import io.ktor.http.encodedPath
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.rpc.RemoteService
 import kotlinx.rpc.RpcClient
 import kotlinx.rpc.krpc.ktor.client.rpc
 import kotlinx.rpc.krpc.ktor.client.rpcConfig
 import kotlinx.rpc.krpc.serialization.json.json
-import kotlinx.rpc.krpc.streamScoped
 import kotlinx.rpc.withService
 import org.example.krpc.RAILWAY_DOMAIN
 import org.example.krpc.TLS_PORT
@@ -59,14 +56,4 @@ suspend inline fun <reified T : RemoteService> HttpClient.rpcService(
 ): T {
     val rpcClient = getRpcClient(rpcPath)
     return rpcClient.withService<T>()
-}
-
-inline fun <R : Any> rpcFlow(
-    crossinline request: suspend () -> Flow<R>
-): Flow<R> = channelFlow { /** channel flow т.к. отправляем из другой корутины [streamScoped] */
-    streamScoped {
-        request().collect {
-            send(it)
-        }
-    }
 }

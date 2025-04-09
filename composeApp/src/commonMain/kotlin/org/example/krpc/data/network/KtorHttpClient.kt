@@ -18,7 +18,6 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.rpc.krpc.ktor.client.installKrpc
 import kotlinx.serialization.json.Json
 import io.ktor.serialization.kotlinx.json.json
-import org.example.krpc.INVALID_REFRESH_TOKEN_CODE
 import org.example.krpc.RAILWAY_DOMAIN
 import org.example.krpc.TLS_PORT
 import org.example.krpc.data.preferences.getRefreshToken
@@ -82,23 +81,25 @@ internal fun ktorClient(): HttpClient = HttpClient {
     /** обработка 401 кода */
     it.plugin(HttpSend).intercept { request ->
         val originalCall = execute(request)
+
         if (originalCall.response.status == HttpStatusCode.Unauthorized) {
             val refreshTokenUseCase = inject<RefreshTokenUseCase>()
             val dataStore = inject<DataStore<Preferences>>()
 
-            /** запрашиваем новые токены */
             val refreshToken = dataStore.getRefreshToken()
-            val rpcResponse = refreshTokenUseCase.invoke(refreshToken)
 
-            if (rpcResponse.error?.code == INVALID_REFRESH_TOKEN_CODE) {
-                /** какая-нибудь логика разлогина */
-                throw InvalidRefreshTokenException()
-            } else {
+            /** запрашиваем новые токены */
+            val userResponse = refreshTokenUseCase.invoke(refreshToken)
+
+            if (userResponse.refreshToken != null && userResponse.authToken != null) {
                 /** повторяем запрос с новым токеном */
                 val authToken = dataStore.getToken()
                 request.headers.remove(HttpHeaders.Authorization)
                 request.header(HttpHeaders.Authorization, "Bearer $authToken")
                 execute(request)
+            } else {
+                /** рефреш токен просрочен */
+                throw InvalidRefreshTokenException()
             }
         } else {
             originalCall

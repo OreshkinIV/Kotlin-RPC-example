@@ -17,7 +17,7 @@ class UserRepositoryImpl(
         return rpcApi.sendMessage(message)
     }
 
-    override fun listenMessages(): Flow<String> {
+    override suspend fun listenMessages(): Flow<String> {
         return rpcApi.listenMessages()
     }
 

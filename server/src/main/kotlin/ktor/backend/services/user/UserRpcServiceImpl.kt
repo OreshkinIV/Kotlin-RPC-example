@@ -22,7 +22,7 @@ class UserRpcServiceImpl(
         allMessages.add(message)
     }
 
-    override suspend fun listenMessages(): Flow<String> {
+    override fun listenMessages(): Flow<String> {
         return flow {
             while (true) {
                 allMessages.forEach { message ->
