@@ -1,8 +1,6 @@
 package ktor.backend
 
 import com.typesafe.config.ConfigFactory
-import io.ktor.network.tls.certificates.buildKeyStore
-import io.ktor.network.tls.certificates.saveToFile
 import io.ktor.server.application.Application
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.applicationEnvironment
@@ -20,6 +18,7 @@ import org.example.krpc.DEFAULT_PORT
 import org.example.krpc.TLS_PORT
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.security.KeyStore
 
 fun main() {
     embeddedServer(
@@ -41,17 +40,15 @@ private fun ApplicationEngine.Configuration.envConfig() {
     }
 
     /** ssl */
-    val keyStoreFile = File("rpcexample.jks")
-    val keyStore = buildKeyStore {
-        certificate("rpc") {
-            password = "password"
-        }
-    }
-    keyStore.saveToFile(keyStoreFile, "password")
+    val keyStoreFile = File("keystore.p12")
+
+    val keystore: KeyStore = KeyStore.getInstance(
+        keyStoreFile, "password".toCharArray()
+    )
 
     sslConnector(
-        keyStore = keyStore,
-        keyAlias = "rpc",
+        keyStore = keystore,
+        keyAlias = "cert",
         keyStorePassword = { "password".toCharArray() },
         privateKeyPassword = { "password".toCharArray() }) {
         port = TLS_PORT

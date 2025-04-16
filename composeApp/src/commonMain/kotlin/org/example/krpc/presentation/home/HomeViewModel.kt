@@ -51,11 +51,19 @@ class HomeViewModel(
 
     private fun listenMessages() {
         viewModelScope.launch {
-            listenMessagesUseCase().catch {
-                emitErrorEvent(it)
-            }.collect { value ->
-                _events.emit(HomeEvent.ShowSnackbar(value))
-            }
+            runCatching {
+                listenMessagesUseCase().catch {
+                    emitErrorEvent(it)
+                }.collect { value ->
+                    _events.emit(HomeEvent.ShowSnackbar(value))
+                }
+            }.fold(
+                onSuccess = {
+                },
+                onFailure = {
+                    emitErrorEvent(it)
+                }
+            )
         }
     }
 
