@@ -33,6 +33,7 @@ import me.sample.library.resources.from_screen
 import me.sample.library.resources.get_user_jwt
 import me.sample.library.resources.image
 import me.sample.library.resources.load_file
+import me.sample.library.resources.load_file_with_progress
 import me.sample.library.resources.logout
 import me.sample.library.resources.message
 import me.sample.library.resources.send_message
@@ -50,6 +51,7 @@ fun HomeScreen(
     from: String,
     viewModel: HomeViewModel = koinViewModel<HomeViewModel>()
 ) {
+    var fileProgress by remember { mutableStateOf("progress: 0") }
 
     val resEnv = rememberResourceEnvironment()
     var file by remember { mutableStateOf(ByteArray(0)) }
@@ -67,10 +69,15 @@ fun HomeScreen(
                     navController.currentDestination?.route?.let { popUpTo(it) { inclusive = true } }
                 }
             }
+
             is HomeEvent.ShowSnackbar -> {
                 snackbarHostState.showSnackbar(
                     message = event.message
                 )
+            }
+
+            is HomeEvent.UpdateProgress -> {
+                fileProgress = event.message
             }
         }
     }
@@ -154,7 +161,7 @@ fun HomeScreen(
             Button(
                 onClick = {
                     snackbarHostState.currentSnackbarData?.dismiss()
-                    viewModel.loadFile(file,"image.jpeg")
+                    viewModel.loadFile(file, "image.jpeg")
                 },
                 shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
@@ -163,6 +170,26 @@ fun HomeScreen(
             ) {
                 Text(text = stringResource(Res.string.load_file))
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            /** отправить файл с прогрессом */
+            Button(
+                onClick = {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    viewModel.loadFileWithProgress(file, "image.jpeg")
+                },
+                shape = RoundedCornerShape(50.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
+                Text(text = stringResource(Res.string.load_file_with_progress))
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(text = fileProgress)
         }
     }
 }

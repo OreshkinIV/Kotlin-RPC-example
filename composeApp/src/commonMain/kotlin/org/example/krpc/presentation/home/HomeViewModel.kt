@@ -11,6 +11,7 @@ import org.example.krpc.data.preferences.PreferencesKeys
 import org.example.krpc.domain.usecases.user.ListenMessagesUseCase
 import org.example.krpc.domain.usecases.user.GetUserJwtPayloadUseCase
 import org.example.krpc.domain.usecases.user.LoadFileUseCase
+import org.example.krpc.domain.usecases.user.LoadFileWithProgressUseCase
 import org.example.krpc.domain.usecases.user.SendMessageUseCase
 import org.example.krpc.presentation.base.ext.BaseViewModel
 
@@ -19,6 +20,7 @@ class HomeViewModel(
     private val getUserJwtPayloadUseCase: GetUserJwtPayloadUseCase,
     private val listenMessagesUseCase: ListenMessagesUseCase,
     private val loadFileUseCase: LoadFileUseCase,
+    private val loadFileWithProgressUseCase: LoadFileWithProgressUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
 ) : BaseViewModel<HomeEvent>() {
 
@@ -57,13 +59,9 @@ class HomeViewModel(
                 }.collect { value ->
                     _events.emit(HomeEvent.ShowSnackbar(value))
                 }
-            }.fold(
-                onSuccess = {
-                },
-                onFailure = {
-                    emitErrorEvent(it)
-                }
-            )
+            }.onFailure {
+                emitErrorEvent(it)
+            }
         }
     }
 
@@ -79,6 +77,20 @@ class HomeViewModel(
                     emitErrorEvent(it)
                 }
             )
+        }
+    }
+
+    fun loadFileWithProgress(byteArray: ByteArray, name: String) {
+        viewModelScope.launch {
+            runCatching {
+                loadFileWithProgressUseCase(byteArray, name).catch {
+                    emitErrorEvent(it)
+                }.collect { value ->
+                    _events.emit(HomeEvent.UpdateProgress("progress: $value"))
+                }
+            }.onFailure {
+                emitErrorEvent(it)
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import kotlinx.coroutines.flow.Flow
 import org.example.krpc.data.network.rpcService
 import org.example.krpc.models.requests.AuthBody
+import org.example.krpc.models.requests.FileChunk
 import org.example.krpc.models.responses.JwtPayload
 import org.example.krpc.models.responses.UserResponse
 import org.example.krpc.services.AuthRpcService
@@ -26,6 +27,11 @@ interface RpcApi {
     suspend fun listenMessages(): Flow<String>
 
     suspend fun loadFile(file: ByteArray, name: String)
+
+    suspend fun loadFileWithProgress(
+        chunks: Flow<FileChunk>,
+        name: String,
+    ): Flow<Int>
 }
 
 class RpcApiImpl(
@@ -42,7 +48,8 @@ class RpcApiImpl(
     }
 
     /**
-     * http client можно закрыть для освобождения ресурсов, незавершенные вызовы продолжат выполняться
+     * http client можно закрыть для освобождения ресурсов (если используется не 1 экземпляр httpClient),
+     * незавершенные вызовы продолжат выполняться
      * override suspend fun registerNewUser(body: AuthBody): RpcResponse<UserResponse?> {
      *         return withCloseClient { authService().registerNewUser(body) }
      *     }
@@ -83,5 +90,12 @@ class RpcApiImpl(
 
     override suspend fun loadFile(file: ByteArray, name: String) {
         return userService().loadFile(file, name)
+    }
+
+    override suspend fun loadFileWithProgress(
+        chunks: Flow<FileChunk>,
+        name: String,
+    ): Flow<Int> {
+        return userService().loadFileWithProgress(chunks, name)
     }
 }

@@ -11,4 +11,5 @@
     <string name="get_user_jwt">Получить JWT Payload</string>
     <string name="from_screen">from: %1$s</string>
     <string name="load_file">Отправить файл на сервер</string>
+    <string name="load_file_with_progress">Отправить файл по частям</string>
 </resources>

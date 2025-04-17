@@ -18,8 +18,6 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.rpc.krpc.ktor.client.installKrpc
 import kotlinx.serialization.json.Json
 import io.ktor.serialization.kotlinx.json.json
-import org.example.krpc.RAILWAY_DOMAIN
-import org.example.krpc.TLS_PORT
 import org.example.krpc.data.preferences.getRefreshToken
 import org.example.krpc.data.preferences.getToken
 import org.example.krpc.di.inject
@@ -53,7 +51,7 @@ internal fun ktorClient(): HttpClient = HttpClient {
 //            port = 0
 
             /** local tls */
-            port = TLS_PORT
+            port = 8443
             host = getLocalHost()
 
             /** local http */
