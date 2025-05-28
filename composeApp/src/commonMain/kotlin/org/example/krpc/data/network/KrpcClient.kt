@@ -13,6 +13,7 @@ import kotlinx.rpc.krpc.ktor.client.rpc
 import kotlinx.rpc.krpc.ktor.client.rpcConfig
 import kotlinx.rpc.krpc.serialization.json.json
 import kotlinx.rpc.withService
+import org.example.krpc.RAILWAY_DOMAIN
 import org.example.krpc.data.preferences.getToken
 import org.example.krpc.di.inject
 
@@ -33,7 +34,7 @@ suspend fun HttpClient.getRpcClient(rpcPath: String): RpcClient {
             host = getLocalHost()
 
             /** local http */
-//            port = SERVER_PORT
+//            port = 8080
 //            host = getLocalHost()
 
             encodedPath = rpcPath

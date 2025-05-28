@@ -8,9 +8,19 @@ import kotlinx.rpc.annotations.Rpc
 @Rpc
 interface AuthRpcService: RemoteService {
 
+    /** регистрация пользователя
+     * @param body - логин и пароль пользователя
+     */
     suspend fun registerNewUser(body: AuthBody): UserResponse
 
+    /** вход
+     * @param body - логин и пароль пользователя
+     */
     suspend fun login(body: AuthBody): UserResponse
 
+    /** получить новую пару токенов
+     * @param refreshToken - рефреш-токен
+     * @return возвращает пару auth и refresh токенов
+     */
     suspend fun refreshToken(refreshToken: String): UserResponse
 }

@@ -38,6 +38,8 @@ internal actual fun HttpClientConfig<*>.configureForPlatform() {
 
         // Применяем к движку
         config {
+            /** если идет обращение к railway, в chain приходит сертификат Lets encrypt, и кастомный trust manager для проверки
+             * самоподписанного сертификата не нужен, и надо закомментить sslSocketFactory */
             sslSocketFactory(sslContext.socketFactory, trustManager)
             hostnameVerifier { _, _ -> true } // Отключаем проверку хоста
         }

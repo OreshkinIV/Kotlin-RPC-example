@@ -8,10 +8,6 @@ interface UserRepository {
 
     suspend fun getUserJwtPayload(): JwtPayload
 
-    suspend fun sendMessage(message: String)
-
-    suspend fun listenMessages(): Flow<String>
-
     suspend fun loadFile(file: ByteArray, name: String)
 
     suspend fun loadFileWithProgress(

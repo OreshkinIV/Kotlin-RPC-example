@@ -2,9 +2,6 @@ package org.example.krpc.domain.usecases.auth.rest
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.withContext
 import org.example.krpc.data.api.rest.RestApi
 import org.example.krpc.data.preferences.saveTokens
 import org.example.krpc.models.requests.AuthBody
@@ -21,10 +18,8 @@ class RestRegisterUserUseCaseImpl(
 ) : RestRegisterUserUseCase {
 
     override suspend fun invoke(body: AuthBody): UserResponse {
-        return withContext(Dispatchers.IO) {
-            api.registerUser(body).also {
-                dataStore.saveTokens(it)
-            }
+        return api.registerUser(body).also {
+            dataStore.saveTokens(it)
         }
     }
 }

@@ -15,6 +15,7 @@ import io.ktor.client.plugins.plugin
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.URLProtocol
 import kotlinx.rpc.krpc.ktor.client.installKrpc
 import kotlinx.serialization.json.Json
 import io.ktor.serialization.kotlinx.json.json
@@ -51,19 +52,20 @@ internal fun ktorClient(): HttpClient = HttpClient {
 //            port = 0
 
             /** local tls */
+            protocol = URLProtocol.HTTPS
             port = 8443
             host = getLocalHost()
 
             /** local http */
-//            port = SERVER_PORT
+//            port = 8080
 //            host = getLocalHost()
         }
     }
     /** timeout */
     install(HttpTimeout) {
-        connectTimeoutMillis = TIMEOUT_MILLIS
-        requestTimeoutMillis = TIMEOUT_MILLIS
-//        socketTimeoutMillis = TIMEOUT_MILLIS
+        connectTimeoutMillis = Long.MAX_VALUE
+        requestTimeoutMillis = Long.MAX_VALUE
+        socketTimeoutMillis = Long.MAX_VALUE
     }
     /** http logging */
     install(Logging) {

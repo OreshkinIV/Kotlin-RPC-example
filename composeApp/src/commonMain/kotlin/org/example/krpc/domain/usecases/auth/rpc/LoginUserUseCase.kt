@@ -1,8 +1,5 @@
 package org.example.krpc.domain.usecases.auth.rpc
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.withContext
 import org.example.krpc.models.requests.AuthBody
 import org.example.krpc.domain.repo.AuthRepository
 import org.example.krpc.models.responses.UserResponse
@@ -16,8 +13,6 @@ class LoginUserUseCaseImpl(
 ) : LoginUserUseCase {
 
     override suspend fun invoke(body: AuthBody): UserResponse {
-        return withContext(Dispatchers.IO) {
-            authRepository.login(body)
-        }
+        return authRepository.login(body)
     }
 }

@@ -11,29 +11,10 @@ import kotlin.coroutines.CoroutineContext
 class UserRpcServiceImpl(
     override val coroutineContext: CoroutineContext,
     private val jwtPayload: JwtPayload,
-    private val allMessages: MutableSet<String>,
-    private val receivedMessages: MutableSet<String>
 ) : UserRpcService {
 
     override suspend fun getUserJwtPayload(): JwtPayload {
         return jwtPayload
-    }
-
-    override suspend fun sendMessage(message: String) {
-        allMessages.add(message)
-    }
-
-    override fun listenMessages(): Flow<String> {
-        return flow {
-            while (true) {
-                allMessages.forEach { message ->
-                    if (!receivedMessages.contains(message)) {
-                        receivedMessages.add(message)
-                        emit(message)
-                    }
-                }
-            }
-        }
     }
 
     /** сохраняем файл в папку проекта uploads */

@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import org.example.krpc.data.network.InvalidRefreshTokenException
 import org.example.krpc.data.preferences.PreferencesKeys
-import org.example.krpc.domain.usecases.user.ListenMessagesUseCase
+import org.example.krpc.domain.usecases.messages.ListenMessagesUseCase
 import org.example.krpc.domain.usecases.user.GetUserJwtPayloadUseCase
 import org.example.krpc.domain.usecases.user.LoadFileUseCase
 import org.example.krpc.domain.usecases.user.LoadFileWithProgressUseCase
-import org.example.krpc.domain.usecases.user.SendMessageUseCase
+import org.example.krpc.domain.usecases.messages.SendMessageUseCase
 import org.example.krpc.presentation.base.ext.BaseViewModel
 
 class HomeViewModel(
@@ -53,16 +53,16 @@ class HomeViewModel(
 
     private fun listenMessages() {
         viewModelScope.launch {
-            runCatching {
-                listenMessagesUseCase().catch {
+                runCatching {
+                    listenMessagesUseCase().catch {
+                        emitErrorEvent(it)
+                    }.collect { value ->
+                        _events.emit(HomeEvent.ShowSnackbar(value))
+                    }
+                }.onFailure {
                     emitErrorEvent(it)
-                }.collect { value ->
-                    _events.emit(HomeEvent.ShowSnackbar(value))
                 }
-            }.onFailure {
-                emitErrorEvent(it)
             }
-        }
     }
 
     fun loadFile(byteArray: ByteArray, name: String) {

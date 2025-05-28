@@ -8,6 +8,7 @@ import org.example.krpc.models.requests.FileChunk
 import org.example.krpc.models.responses.JwtPayload
 import org.example.krpc.models.responses.UserResponse
 import org.example.krpc.services.AuthRpcService
+import org.example.krpc.services.MessagesRpcService
 import org.example.krpc.services.UserRpcService
 
 interface RpcApi {
@@ -47,6 +48,10 @@ class RpcApiImpl(
         return httpClient.rpcService<UserRpcService>("user")
     }
 
+    private suspend fun messagesService(): MessagesRpcService {
+        return httpClient.rpcService<MessagesRpcService>("messages")
+    }
+
     /**
      * http client можно закрыть для освобождения ресурсов (если используется не 1 экземпляр httpClient),
      * незавершенные вызовы продолжат выполняться
@@ -81,11 +86,11 @@ class RpcApiImpl(
     }
 
     override suspend fun sendMessage(message: String) {
-        return userService().sendMessage(message)
+        return messagesService().sendMessage(message)
     }
 
     override suspend fun listenMessages(): Flow<String> {
-        return userService().listenMessages()
+        return messagesService().listenMessages()
     }
 
     override suspend fun loadFile(file: ByteArray, name: String) {

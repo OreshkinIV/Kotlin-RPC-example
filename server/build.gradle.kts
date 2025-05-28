@@ -34,6 +34,14 @@ ktor {
     }
 }
 
+val osName = System.getProperty("os.name").lowercase()
+val tcnative_classifier = when {
+    osName.contains("win") -> "windows-x86_64"
+    osName.contains("linux") -> "linux-x86_64"
+    osName.contains("mac") -> "osx-x86_64"
+    else -> null
+}
+
 dependencies {
     /** shared module */
     implementation(projects.shared)
@@ -70,4 +78,11 @@ dependencies {
 
     /** logs */
     implementation(libs.logback)
+
+//    /** http 2 */
+//    if (tcnative_classifier != null) {
+//        implementation("io.netty:netty-tcnative-boringssl-static:2.0.67.Final:$tcnative_classifier")
+//    } else {
+//        implementation(libs.netty.http2)
+//    }
 }

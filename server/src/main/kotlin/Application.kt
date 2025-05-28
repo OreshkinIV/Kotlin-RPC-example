@@ -18,6 +18,7 @@ import org.example.krpc.DEFAULT_PORT
 import org.example.krpc.TLS_PORT
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.nio.file.Files
 import java.security.KeyStore
 
 fun main() {
@@ -39,13 +40,23 @@ private fun ApplicationEngine.Configuration.envConfig() {
         port = DEFAULT_PORT
     }
 
-    /** ssl */
+    /** ssl
+     * ВЕСЬ код ниже можно закомментить, если деплоить в railway так как он сам обрабатывает
+     * tls соединение */
     val keyStoreFile = File("keystore.p12")
+
+    /** при деплое и упаковке в jar доступ к хранилищу из ресурсов */
+//    val keyStoreFile = Files.createTempFile("keystore", ".p12").toFile()
+//    this::class.java.classLoader.getResourceAsStream("keystore.p12")?.use { input ->
+//        keyStoreFile.outputStream().use { output ->
+//            input.copyTo(output)
+//        }
+//    } ?: throw IllegalArgumentException("keystore.p12 не найден")
 
     val keystore: KeyStore = KeyStore.getInstance(
         keyStoreFile, "password".toCharArray()
     )
-
+//
     sslConnector(
         keyStore = keystore,
         keyAlias = "cert",

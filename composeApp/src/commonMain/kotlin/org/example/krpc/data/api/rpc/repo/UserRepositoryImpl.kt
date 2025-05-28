@@ -14,14 +14,6 @@ class UserRepositoryImpl(
         return rpcApi.getUserJwtPayload()
     }
 
-    override suspend fun sendMessage(message: String) {
-        return rpcApi.sendMessage(message)
-    }
-
-    override suspend fun listenMessages(): Flow<String> {
-        return rpcApi.listenMessages()
-    }
-
     override suspend fun loadFile(file: ByteArray, name: String) {
         return rpcApi.loadFile(file, name)
     }

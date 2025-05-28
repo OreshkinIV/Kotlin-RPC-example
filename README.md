@@ -13,7 +13,8 @@ Cерверное приложение Ktor с обращением к PostgreSQ
 Если и refresh токен не валиден, то происходит разлогин на стороне клиента.
 Для запуска сервера локально вызвать main функцию [Application](server/src/main/kotlin/Application.kt).
 Обращение к базе данных закомментировано в таблице [Users](server/src/main/kotlin/ktor/backend/db/postgresql/tables/users/Users.kt), т.к. закончился пробный период Railway и пользователи никуда не сохраняются.
-Серверное приложение содержит 2 rpc маршрута:
+(Вход через кнопку регистрации)
+Серверное приложение содержит 3 rpc маршрута:
 
 1) auth - по данному пути находятся методы:
    * registerNewUser - регистрация пользователя и получение auth и refresh токенов
@@ -22,9 +23,12 @@ Cерверное приложение Ktor с обращением к PostgreSQ
 
 2) user - по данному пути находятся методы, требующие токен авторизации:
    * getUserJwtPayload - получение jwt payload текущего пользователя
+   * loadFile - отправка файла от клиента как ByteArray
+   * loadFileWithProgress - отправка файла по частям
+   
+3) messages - отправка и просмотр сообщений
    * sendMessage - отправка сообщения пользователем
    * listenMessages - прослушивание потока сообщений, отправленных методом sendMessage
-   * loadFile - отправка файла от клиента как ByteArray
 
 ### shared модуль
 
@@ -38,7 +42,7 @@ ios не запускал, т.к. нужен mac и xcode, а web отключе
 В качестве DI используется Koin.
 Если обращаться к серверу, запущенному локально из терминала на вашем компьютере, то в [KrpcClient](composeApp/src/commonMain/kotlin/org/example/krpc/data/network/KrpcClient.kt)
 нужно использовать port = TLS_PORT и host = getLocalHost(). Если обращаться к серверу, развернотому в Railway, то использовать
-host = RAILWAY_DOMAIN и port = 0.
+host = RAILWAY_DOMAIN и port = 0 и без sslSocketFactory.
 
 
 
